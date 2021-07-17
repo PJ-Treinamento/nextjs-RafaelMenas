@@ -1,8 +1,6 @@
 import { NextPage } from 'next';
-import HomeTemplate from 'template/Home';
+import Landing from 'template/LandingPage';
 
-const Home: NextPage = () => {
-    return <HomeTemplate />;
-};
+const Home: NextPage = () => <Landing />;
 
 export default Home;

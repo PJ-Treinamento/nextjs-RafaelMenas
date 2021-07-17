@@ -16,7 +16,10 @@
         ]
     },
     "dependencies": {
+        "@types/cookie": "^0.4.1",
+        "axios": "^0.21.1",
         "next": "^11.0.1",
+        "nookies": "^2.5.2",
         "react": "^16.13.0",
         "react-dom": "^16.13.0",
         "styled-components": "^5.0.0"
@@ -25,7 +28,7 @@
         "@babel/core": "^7.14.6",
         "@babel/preset-typescript": "^7.14.5",
         "@storybook/addon-essentials": "^6.2.9",
-        "@storybook/react": "^6.2.9",
+        "@storybook/react": "^6.3.4",
         "@types/node": "12.0.12",
         "@types/react": "16.8.23",
         "@types/react-dom": "16.8.4",
