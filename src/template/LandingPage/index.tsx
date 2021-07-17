@@ -17,7 +17,9 @@ function Landing() {
     return (
         <S.Landing>
             <S.Left>
-                <S.PenaImg src={PenaImg} alt="logopiupiuwer" />
+                <S.PenaDiv>
+                    <S.PenaImg src={PenaImg} alt="logopiupiuwer" />
+                </S.PenaDiv>
                 <S.Logo>
                     <S.LogoImg src={LogoImg} alt="Piupiuwer" />
                     <S.ConnectH2>Connect with your best friends</S.ConnectH2>
@@ -48,6 +50,7 @@ function Landing() {
                     </S.FormInputs>
                     <S.LogForgot>
                         <S.SubmitButton
+                            type="submit"
                             onClick={() =>
                                 login({
                                     email: emailInput,

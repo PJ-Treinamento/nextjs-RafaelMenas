@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
+import { parseCookies } from 'nookies';
 import * as S from './styles';
 
 import Like from '../../assets/images/Feed/likeIcon.svg';
@@ -9,17 +10,24 @@ import Repiu from '../../assets/images/Feed/repiuIcon.svg';
 import RepiuRed from '../../assets/images/Feed/repiuRedIcon.svg';
 import Replie from '../../assets/images/Feed/replieIcon.svg';
 import Loading from '../../assets/images/Feed/LoadGif.gif';
+import perfilImg from '../../assets/images/Feed/perfilIcon.svg';
 
-import { useAuth } from '../../hooks/useAuth';
 import api from '../../../service/api';
-import { IPiu } from '../../models';
+import { IPiu, IUser } from '../../models';
 
-const Otherpius: React.FC<IPiu> = ({ user, likes, text, id }) => {
-    const { token } = useAuth();
-    const { user: User } = useAuth();
+type OtherPiusProps = {
+    user: IUser;
+    piu: IPiu;
+};
+
+const Otherpius: React.FC<OtherPiusProps> = ({ user, piu }) => {
+    let { photo } = piu.user;
+    const { '@Project:token': token } = parseCookies();
+
+    if (photo === '.....') photo = perfilImg;
 
     const deletePiu = async (piu_id: string) => {
-        if (user.username === User.username) {
+        if (piu.user.username === user.username) {
             await api.delete('/pius', {
                 headers: { Authorization: `Bearer ${token}` },
                 data: {
@@ -31,7 +39,7 @@ const Otherpius: React.FC<IPiu> = ({ user, likes, text, id }) => {
     };
 
     const [redLike, setRedLike] = useState(Loading);
-    const [numLike, setnumLike] = useState(likes.length);
+    const [numLike, setnumLike] = useState(piu.likes.length);
 
     const likePius = async (piu_id: string) => {
         const responseLike = await api.post(
@@ -52,14 +60,10 @@ const Otherpius: React.FC<IPiu> = ({ user, likes, text, id }) => {
 
     const [redFav, setRedFav] = useState(Loading);
 
-    const GetMyFav = async () => {
-        const response = await api.get(`/users?username=${User.username}`, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+    const GetMyFav = () => {
         let fav = false;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        fav = response.data[0].favorites.some((favorite: any) => {
-            return id === favorite.id;
+        fav = user.favorites.some((favorite: IPiu) => {
+            return piu.id === favorite.id;
         });
         if (fav === true) {
             setRedFav(RepiuRed);
@@ -68,13 +72,10 @@ const Otherpius: React.FC<IPiu> = ({ user, likes, text, id }) => {
         }
     };
 
-    const GetMyLikes = async () => {
-        const response = await api.get(`/users?username=${User.username}`, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+    const GetMyLikes = () => {
         let liked = false;
-        liked = likes.some((like) => {
-            return like.user.id === response.data[0].id;
+        liked = piu.likes.some((like) => {
+            return like.user.id === user.id;
         });
         if (liked === true) {
             setRedLike(Likered);
@@ -114,10 +115,10 @@ const Otherpius: React.FC<IPiu> = ({ user, likes, text, id }) => {
     const favunfav = () => {
         if (redFav === Repiu) {
             setRedFav(RepiuRed);
-            favoritePius(id);
+            favoritePius(piu.id);
         }
         if (redFav === RepiuRed) {
-            unfavoritePius(id);
+            unfavoritePius(piu.id);
             setRedFav(Repiu);
         }
     };
@@ -141,13 +142,18 @@ const Otherpius: React.FC<IPiu> = ({ user, likes, text, id }) => {
         <S.OtherPiusWrapper>
             <S.PrincipalWrapper>
                 <div>
-                    <Image src={user.photo} alt="imagem de perfil" />
-                    <S.FirstName>{user.first_name}</S.FirstName>
+                    <Image
+                        src={photo || perfilImg}
+                        alt="imagem de perfil"
+                        width={50}
+                        height={50}
+                    />
+                    <S.FirstName>{piu.user.first_name}</S.FirstName>
                 </div>
-                <S.Arroba>{`@${user.username}`}</S.Arroba>
+                <S.Arroba>{`@${piu.user.username}`}</S.Arroba>
             </S.PrincipalWrapper>
             <S.PiuTextWrapper>
-                <S.Text>{text}</S.Text>
+                <S.Text>{piu.text}</S.Text>
                 <S.InterationsWrapper>
                     <S.ReplieWrapper>
                         <Image src={Replie} alt="Replie" />
@@ -158,7 +164,7 @@ const Otherpius: React.FC<IPiu> = ({ user, likes, text, id }) => {
                     </S.RepiuWrapper>
                     <S.LikeWrapper
                         onClick={() => {
-                            likePius(id);
+                            likePius(piu.id);
                         }}
                     >
                         <Image src={redLike} alt="Like" />
@@ -172,12 +178,12 @@ const Otherpius: React.FC<IPiu> = ({ user, likes, text, id }) => {
                     </S.LikeWrapper>
                     <S.Buttons>
                         <S.DeletePiu
-                            delete={user.username === User.username}
-                            onClick={() => deletePiu(id)}
+                            delete={piu.user.username === user.username}
+                            onClick={() => deletePiu(piu.id)}
                         >
                             Apagar
                         </S.DeletePiu>
-                        <button type="submit" onClick={() => Follow(id)}>
+                        <button type="submit" onClick={() => Follow(piu.id)}>
                             follow
                         </button>
                     </S.Buttons>

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import Image from 'next/image';
 
 export const Landing = styled.div`
     width: 100vw;
@@ -16,18 +17,15 @@ export const Left = styled.div`
     align-items: center;
 `;
 
-export const PenaImg = styled.img`
+export const PenaImg = styled(Image)`
     height: 5rem;
-    position: absolute;
-    left: 2rem;
-    top: 2rem;
 `;
 
 export const Logo = styled.div`
     margin-bottom: 5rem;
 `;
 
-export const LogoImg = styled.img`
+export const LogoImg = styled(Image)`
     height: 14rem;
 `;
 
@@ -45,6 +43,12 @@ export const Right = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
+`;
+
+export const PenaDiv = styled.div`
+    position: absolute;
+    top: 40px;
+    left: 20px;
 `;
 
 export const NewAccountButton = styled.button`

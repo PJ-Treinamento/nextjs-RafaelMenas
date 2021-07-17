@@ -6,7 +6,9 @@ import * as S from './styles';
 function Subjects() {
     return (
         <S.SubjectsWrapper>
-            <S.PenaIcon src={PenaImg} alt="Pena" id="penafeed" />
+            <S.PenaIconDiv>
+                <S.PenaIcon src={PenaImg} alt="Pena" id="penafeed" />
+            </S.PenaIconDiv>
             <S.BoxesWrapper>
                 <S.TrendingSubjectsWrapper>
                     <S.TrendingSubjectsBox>

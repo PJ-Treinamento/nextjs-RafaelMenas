@@ -1,18 +1,22 @@
 import styled from 'styled-components';
 
+import Image from 'next/image';
+
 export const SubjectsWrapper = styled.div`
     width: 30vw;
     height: 88vh;
     position: absolute;
     right: 0rem;
-    top: 6vh;
+    top: 5vh;
     position: fixed;
 `;
-export const PenaIcon = styled.img`
+export const PenaIcon = styled(Image)`
     height: 5rem;
+`;
+export const PenaIconDiv = styled.div`
     position: absolute;
-    right: 1rem;
-    top: 8rem;
+    right: 1vw;
+    top: 10vh;
 `;
 export const BoxesWrapper = styled.div`
     display: flex;
@@ -79,7 +83,7 @@ export const FollowBox = styled.div`
     }
 `;
 
-export const PerfilPhoto = styled.img`
+export const PerfilPhoto = styled(Image)`
     height: 4rem;
 `;
 

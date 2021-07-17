@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 import * as S from './styles';
 
@@ -7,38 +7,28 @@ import PageBrowser from '../../components/PageBrowser';
 import Mypiu from '../../components/MyPiu';
 import Otherpius from '../../components/OtherPius';
 import Subjects from '../../components/Subjects';
-import { useAuth } from '../../hooks/useAuth';
-import { IPiu } from '../../models';
-import api from '../../../service/api';
+import { IPiu, IUser } from '../../models';
 
-function Feed() {
-    const { token } = useAuth();
+export type FeedProps = {
+    user: IUser;
+    pius: IPiu[];
+    users?: IPiu[];
+};
 
-    const [pius, setPius] = useState<IPiu[]>([]);
-
-    useEffect(() => {
-        const getPius = async () => {
-            const responsePius = await api.get('/pius', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setPius(responsePius.data);
-        };
-        getPius();
-    }, [token]);
-
+const Feed: React.FC<FeedProps> = ({ user, pius }) => {
     const [search, setSearch] = useState('');
 
     return (
         <S.FeedWrapper>
             <S.HeaderWrapper>
-                <PageHeader search={search} setSearch={setSearch} />
+                <PageHeader setSearch={setSearch} user={user} />
             </S.HeaderWrapper>
             <S.UnheadFeed>
                 <PageBrowser />
                 <S.MiddleFeed>
                     <S.EveryPiu>
                         <S.Piu>
-                            <Mypiu />
+                            <Mypiu user={user} />
                             <S.GreyBar />
                             {pius.map((piu) => {
                                 if (
@@ -53,7 +43,14 @@ function Feed() {
                                         .toLowerCase()
                                         .includes(search.toLowerCase())
                                 ) {
-                                    return <Otherpius key={piu.id} {...piu} />;
+                                    return (
+                                        <Otherpius
+                                            key={piu.id}
+                                            {...piu}
+                                            user={user}
+                                            piu={piu}
+                                        />
+                                    );
                                 }
                                 return null;
                             })}
@@ -64,6 +61,6 @@ function Feed() {
             </S.UnheadFeed>
         </S.FeedWrapper>
     );
-}
+};
 
 export default Feed;

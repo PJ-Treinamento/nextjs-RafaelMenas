@@ -1,4 +1,7 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useState } from 'react';
+import { useRouter } from 'next/router';
+import { setCookie, destroyCookie } from 'nookies';
+
 import api from '../../service/api';
 import { IUser } from '../models';
 
@@ -24,36 +27,46 @@ export const AuthContext = createContext<AuthContextData>(
 );
 
 export const AuthProvider: React.FC = ({ children }) => {
-    const [userData, setUserData] = useState<AuthState>(() => {
-        const token = localStorage.getItem('@Project:token');
-        const user = localStorage.getItem('@Project:user');
+    const [userData, setUserData] = useState<AuthState>({} as AuthState);
+    const router = useRouter();
 
-        if (user && token) {
-            api.defaults.headers.Authorization = `Bearer ${token}`;
-            return { user: JSON.parse(user), token };
-        }
+    const login = useCallback(
+        async ({ email, password }: LoginCredentials) => {
+            try {
+                const response = await api.post('/sessions/login/', {
+                    email,
+                    password
+                });
 
-        return {} as AuthState;
-    });
+                const { token, user } = response.data;
+                const { username } = response.data.user;
 
-    const login = async ({ email, password }: LoginCredentials) => {
-        const response = await api.post('/sessions/login/', {
-            email,
-            password
-        });
+                if (token) {
+                    api.defaults.headers.Authorization = `Bearer ${token}`;
 
-        const { token, user } = response.data;
-        localStorage.setItem('@Project:token', token);
-        localStorage.setItem('@Project:user', JSON.stringify(user));
-
-        setUserData({ token, user });
-    };
+                    setCookie(undefined, '@Project:token', token, {
+                        maxAge: 60 * 60 * 1 // 1 hour
+                    });
+                    setCookie(undefined, '@Project:username', username, {
+                        maxAge: 60 * 60 * 1 // 1 hour
+                    });
+                    setUserData({ token, user });
+                    router.push('/Feed');
+                }
+                return null;
+            } catch {
+                return null;
+            }
+        },
+        [router]
+    );
 
     const logout = () => {
-        localStorage.removeItem('@Project:user');
-        localStorage.removeItem('@Project:token');
+        destroyCookie(undefined, '@Project:token');
+        destroyCookie(undefined, '@Project:username');
 
         setUserData({} as AuthState);
+        router.push('/');
     };
 
     return (

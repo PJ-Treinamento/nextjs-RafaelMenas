@@ -1,26 +1,32 @@
 /* eslint-disable react/button-has-type */
 /* eslint-disable react/self-closing-comp */
 import React, { useState } from 'react';
+import { parseCookies } from 'nookies';
 import api from '../../../service/api';
 
 import * as S from './styles';
 
-import { useAuth } from '../../hooks/useAuth';
-import { ITextPiu } from '../../models';
+import { IUser } from '../../models';
 
-const Mypiu = () => {
+type MyPiuProps = {
+    user: IUser;
+};
+
+const Mypiu: React.FC<MyPiuProps> = ({ user }) => {
     const [textBoolean, setTextBoolean] = useState('');
 
     const [textPost, setTextPost] = useState('');
 
-    const { token } = useAuth();
-    const { user } = useAuth();
+    const { '@Project:token': token } = parseCookies();
 
-    const postPius = async ({ text }: ITextPiu) => {
-        await api.post('/pius', {
-            headers: { Authorization: `Bearer ${token}` },
-            text
-        });
+    const postPius = async () => {
+        await api.post(
+            '/pius',
+            { text: textPost },
+            {
+                headers: { Authorization: `Bearer ${token}` }
+            }
+        );
         window.location.reload();
     };
 
@@ -45,7 +51,7 @@ const Mypiu = () => {
             <S.PrincipalWrapper>
                 <img src={user.photo} alt="imagem de perfil" />{' '}
                 <S.Question>What are you thinking?</S.Question>
-                <S.Arroba>{`@${user.username}`}</S.Arroba>
+                <S.Arroba>{user.username}</S.Arroba>
             </S.PrincipalWrapper>
             <S.TextPiuWrapper>
                 <textarea
@@ -60,7 +66,7 @@ const Mypiu = () => {
                 <button
                     onClick={() => {
                         correction();
-                        postPius({ text: textPost });
+                        postPius();
                     }}
                 >
                     piu

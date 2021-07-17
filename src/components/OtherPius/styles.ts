@@ -9,6 +9,7 @@ export const PrincipalWrapper = styled.div`
     justify-content: space-between;
     align-items: center;
     border: 1px solid;
+    padding: 10px;
     div {
         display: flex;
         justify-content: space-between;
@@ -26,6 +27,7 @@ export const PrincipalWrapper = styled.div`
 export const FirstName = styled.p`
     margin-right: 45rem;
     font-size: Belgrano;
+    margin-left: 10px;
 `;
 
 export const Arroba = styled.p`
